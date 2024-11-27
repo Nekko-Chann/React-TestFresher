@@ -3,7 +3,11 @@ import axios from "services/axios.customize.ts";
 const loginAPI = (username: string, password: string)=>{
     const urlBackend = "/api/v1/auth/login";
     const data = {username, password}
-    return axios.post<IBackendRes<ILogin>>(urlBackend, data);
+    return axios.post<IBackendRes<ILogin>>(urlBackend, data,{
+        headers:{
+            delay: 3000
+        }
+    });
 }
 
 const registerAPI = (fullName: string, email: string, password: string, phone: number)=>{

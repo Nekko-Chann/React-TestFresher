@@ -1,5 +1,4 @@
-import {FormProps} from 'antd';
-import {Button, Form, Input, Divider, App} from 'antd';
+import {Button, Form, Input, Divider,FormProps, App} from 'antd';
 import {Link, useNavigate} from 'react-router-dom';
 import {useState} from "react";
 import {registerAPI} from "services/api.ts";
@@ -15,7 +14,7 @@ interface FieldType {
 
 const RegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
-    const {message} = App.useApp();
+    const {message, notification} = App.useApp();
     const navigate = useNavigate();
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
@@ -23,10 +22,15 @@ const RegisterPage = () => {
         const {fullName, email, password, phone} = values;
         const res = await registerAPI(fullName, email, password, phone);
         if (res.data) {
-            message.success("Đăng ký User thành công!");
+            message.success("Đăng ký user thành công!");
             navigate("/login");
         } else {
-            message.error(JSON.stringify(res.data));
+            notification.error({
+                message: "Đăng ký user thất bại",
+                description:
+                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                duration: 5
+            })
         }
         setIsSubmit(false);
     };
@@ -68,7 +72,10 @@ const RegisterPage = () => {
                                 labelCol={{span: 24}} //whole column
                                 label="Mật khẩu"
                                 name="password"
-                                rules={[{required: true, message: 'Mật khẩu không được để trống!'}]}
+                                rules={[
+                                    {required: true, message: 'Mật khẩu không được để trống!'},
+                                    {min: 6, message: 'Mật khẩu phải chứa ít nhất 6 ký tự'}
+                                ]}
                             >
                                 <Input.Password style={{borderRadius: "999px", height: "40px"}}
                                                 placeholder="Nhập mật khẩu..."/>
@@ -77,7 +84,11 @@ const RegisterPage = () => {
                                 labelCol={{span: 24}} //whole column
                                 label="Số điện thoại"
                                 name="phone"
-                                rules={[{required: true, message: 'Số điện thoại không được để trống!'}]}
+                                rules={[
+                                    {required: true, message: 'Số điện thoại không được để trống!'},
+                                    {pattern: new RegExp(/^[0-9]+$/), message: 'Số điện thoại chỉ được chứa số!'},
+                                    {min: 10, message: 'Số điện thoại không hợp !'}
+                                ]}
                             >
                                 <Input style={{borderRadius: "999px", height: "40px"}}
                                        placeholder="Nhập số điện thoại..."/>
