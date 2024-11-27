@@ -23,6 +23,9 @@
       "pages/*": [
         "./src/pages/*"
       ],
+      "services/*": [
+        "./src/services/*"
+      ],
       "styles/*": [
         "./src/styles/*"
       ],
