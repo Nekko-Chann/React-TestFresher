@@ -1,7 +1,7 @@
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
-import { App } from 'antd';
+import {App} from 'antd';
 import Layout from '@/layout'
 import BookPage from 'pages/client/book';
 import AboutPage from 'pages/client/about';
@@ -9,6 +9,7 @@ import LoginPage from 'pages/client/auth/login';
 import RegisterPage from 'pages/client/auth/register';
 import 'styles/global.scss'
 import HomePage from 'pages/client/home';
+import {AppProvider} from "components/context/app.context.tsx";
 
 const router = createBrowserRouter([
     {
@@ -42,7 +43,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <App>
-            <RouterProvider router={router}/>
+            <AppProvider>
+                <RouterProvider router={router}/>
+            </AppProvider>
         </App>
     </StrictMode>
 )

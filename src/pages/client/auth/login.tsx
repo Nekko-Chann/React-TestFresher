@@ -4,6 +4,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {loginAPI} from "services/api.ts";
 
 import 'styles/login.scss';
+import {useCurrentApp} from "components/context/app.context.tsx";
 
 interface FieldType {
     username: string;
@@ -12,6 +13,7 @@ interface FieldType {
 
 const LoginPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
+    const {setUser, setIsAuthenticated} = useCurrentApp();
     const {message,notification} = App.useApp();
     const navigate = useNavigate();
 
@@ -25,6 +27,8 @@ const LoginPage = () => {
         const res = await loginAPI(username, password);
         setIsSubmit(false);
         if (res?.data) {
+            setUser(res.data.user);
+            setIsAuthenticated(true);
             localStorage.setItem('access_token',res.data.access_token);
             message.success("Đăng nhập thành công!");
             navigate("/");
