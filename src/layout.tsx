@@ -7,6 +7,7 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 
 const Layout = () => {
     const {setUser, isLoading, setIsLoading, setIsAuthenticated} = useCurrentApp();
+
     useEffect(() => {
         const fetchAccount = async () => {
             const res = await fetchAccountAPI();
@@ -21,7 +22,7 @@ const Layout = () => {
 
     return (
         <>
-            {!isLoading ?
+            {isLoading === false ?
                 <div>
                     <AppHeader/>
                     <Outlet/>

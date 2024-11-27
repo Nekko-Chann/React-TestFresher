@@ -10,6 +10,7 @@ import RegisterPage from 'pages/client/auth/register';
 import 'styles/global.scss'
 import HomePage from 'pages/client/home';
 import {AppProvider} from "components/context/app.context.tsx";
+import ProtectedRoute from "components/auth";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,22 @@ const router = createBrowserRouter([
             {
                 path: "/about",
                 element: <AboutPage/>,
+            },
+            {
+                path: "/checkout",
+                element: (
+                    <ProtectedRoute>
+                        <div>Checkout Page</div>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "/admin",
+                element: (
+                    <ProtectedRoute>
+                        <div>Admin Page</div>
+                    </ProtectedRoute>
+                ),
             }
         ]
     },
