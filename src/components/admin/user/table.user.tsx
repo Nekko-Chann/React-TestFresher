@@ -1,7 +1,7 @@
 import {ActionType, ProColumns, ProTable} from "@ant-design/pro-components";
 import {Button} from "antd";
-import {useRef} from "react";
-import {PlusOutlined} from "@ant-design/icons";
+import {useRef, useState} from "react";
+import {DeleteTwoTone, EditTwoTone, PlusOutlined} from "@ant-design/icons";
 import {getUsersAPI} from "services/api.ts";
 
 const columns: ProColumns<IUserTable>[] = [
@@ -14,17 +14,23 @@ const columns: ProColumns<IUserTable>[] = [
         title: 'ID',
         dataIndex: '_id',
         ellipsis: true,
+        hideInSearch: true,
+        render(_, entity) {
+            return (
+                <a href='#'>{entity._id}</a>
+            )
+        },
     },
     {
         title: 'Full Name',
         dataIndex: 'fullName',
-        // copyable: true,
+        copyable: true,
         ellipsis: true,
     },
     {
         title: 'Email',
         dataIndex: 'email',
-        // copyable: true,
+        copyable: true,
         ellipsis: true,
     },
     {
@@ -38,56 +44,88 @@ const columns: ProColumns<IUserTable>[] = [
         dataIndex: 'role',
         // copyable: true,
         ellipsis: true,
+        hideInSearch: true,
     },
     {
         title: 'Created At',
         dataIndex: 'createdAt',
-        // copyable: true,
+        copyable: true,
         ellipsis: true,
     },
     {
         title: 'Updated At',
         dataIndex: 'updatedAt',
-        // copyable: true,
+        copyable: true,
         ellipsis: true,
     },
+    {
+        title: 'Action',
+        hideInSearch: true,
+        render() {
+            return (
+                <>
+                    <EditTwoTone
+                        twoToneColor="#f57800"
+                        style={{ cursor: "pointer", marginRight: 15 }}
+                    />
+                    <DeleteTwoTone
+                        twoToneColor="#ff4d4f"
+                        style={{ cursor: "pointer" }}
+                    />
+                </>
+            )
+        }
+    }
 ];
 
 const TableUser = () => {
     const actionRef = useRef<ActionType>();
+    const [meta, setMeta] = useState({
+        current: 1,
+        pageSize: 5,
+        pages: 0,
+        total: 0
+    });
+
     return (
         <>
             <ProTable<IUserTable>
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
-                request={async (sort, filter) => {
-                    console.log(sort, filter);
-                    const res = await getUsersAPI();
-
+                request={async (params,sort, filter) => {
+                    console.log(params, sort, filter);
+                    const res = await getUsersAPI(params?.current ?? 1, params?.pageSize ?? 5);
+                    if(res.data){
+                        setMeta(res.data.meta);
+                    }
                     return {
                         data: res.data?.result,
-                        "page": 1,
-                        "success": true,
-                        "total": res.data?.meta.total
+                        page: 1,
+                        success: true,
+                        total: res.data?.meta.total
                     }
                 }}
-                rowKey="id"
+                rowKey="_id"
                 options={{
                     setting: {
                         listsHeight: 400,
                     },
                 }}
                 pagination={{
-                    pageSize: 5,
-                    onChange: (page) => console.log(page),
+                    current: meta.current,
+                    pageSize: meta.pageSize,
+                    showSizeChanger: true,
+                    pageSizeOptions: ['5', '10', '15', '20', '25', '30'],
+                    total: meta.total,
+                    showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                 }}
                 dateFormatter="string"
                 headerTitle="Table user"
                 toolBarRender={() => [
                     <Button
                         key="button"
-                        icon={<PlusOutlined />}
+                        icon={<PlusOutlined/>}
                         onClick={() => {
                             actionRef.current?.reload();
                         }}
