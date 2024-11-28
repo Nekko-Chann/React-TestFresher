@@ -9,8 +9,13 @@ import LoginPage from 'pages/client/auth/login';
 import RegisterPage from 'pages/client/auth/register';
 import 'styles/global.scss'
 import HomePage from 'pages/client/home';
-import {AppProvider} from "components/context/app.context.tsx";
+import {AppProvider} from "components/context/app.context";
 import ProtectedRoute from "components/auth";
+import LayoutAdmin from "components/layout/layout.admin";
+import DashBoardPage from "pages/admin/dashboard";
+import ManageBookPage from "pages/admin/manage.book";
+import ManageOrderPage from "pages/admin/manage.order";
+import ManageUserPage from "pages/admin/manage.user";
 
 const router = createBrowserRouter([
     {
@@ -37,11 +42,49 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
+        ]
+    },
+    {
+        path: "admin",
+        element: <LayoutAdmin />,
+        children: [
+            {
+                index: true,
+                element: (
+                    <ProtectedRoute>
+                        <DashBoardPage />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "book",
+                element: (
+                    <ProtectedRoute>
+                        <ManageBookPage />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "order",
+                element: (
+                    <ProtectedRoute>
+                        <ManageOrderPage />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "user",
+                element: (
+                    <ProtectedRoute>
+                        <ManageUserPage />
+                    </ProtectedRoute>
+                ),
+            },
             {
                 path: "/admin",
                 element: (
                     <ProtectedRoute>
-                        <div>Admin Page</div>
+                        <div>admin page</div>
                     </ProtectedRoute>
                 ),
             }
