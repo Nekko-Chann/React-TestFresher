@@ -16,15 +16,25 @@ const registerAPI = (fullName: string, email: string, password: string, phone: n
     return axios.post<IBackendRes<IRegister>>(urlBackend, data);
 }
 
+const logoutAPI = () => {
+    const urlBackend = "/api/v1/auth/logout";
+    return axios.post<IBackendRes<ILogin>>(urlBackend);
+}
+
 const fetchAccountAPI = () => {
     const urlBackend = "/api/v1/auth/account";
-    return axios.get<IBackendRes<IFetchAccount>>(urlBackend,{
+    return axios.get<IBackendRes<IFetchAccount>>(urlBackend, {
         headers: {
             delay: 1500
         }
     });
 }
 
+const getUsersAPI = ()=>{
+    const urlBackend = "/api/v1/user?current=1&pageSize=5";
+    return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackend);
+}
+
 export {
-    loginAPI, registerAPI, fetchAccountAPI
+    loginAPI, registerAPI, fetchAccountAPI, logoutAPI, getUsersAPI
 }

@@ -1,26 +1,32 @@
 import {useCurrentApp} from "components/context/app.context";
 import {useState} from "react";
 import {Link} from "react-router-dom";
-import { useNavigate } from 'react-router';
+import {useNavigate} from 'react-router';
 import {FaReact} from "react-icons/fa";
 import {VscSearchFuzzy} from "react-icons/vsc";
 import {Avatar, Badge, Divider, Drawer, Dropdown, Popover, Space} from "antd";
 import {FiShoppingCart} from "react-icons/fi";
 import 'styles/app.header.scss'
+import {logoutAPI} from "services/api.ts";
 
 const AppHeader = () => {
-    const {user, isAuthenticated} = useCurrentApp();
+    const {user, setUser, isAuthenticated, setIsAuthenticated} = useCurrentApp();
     const [openDrawer, setOpenDrawer] = useState(false)
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        //todo
+        const res = await logoutAPI();
+        if (res.data) {
+            setUser(null);
+            setIsAuthenticated(false);
+            localStorage.removeItem('access_token');
+        }
     }
 
     let items = [
         {
             label: <label
-                style={{ cursor: 'pointer' }}
+                style={{cursor: 'pointer'}}
                 onClick={() => alert("me")}
             >Quản lý tài khoản</label>,
             key: 'account',
@@ -31,7 +37,7 @@ const AppHeader = () => {
         },
         {
             label: <label
-                style={{ cursor: 'pointer' }}
+                style={{cursor: 'pointer'}}
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,
             key: 'logout',
@@ -82,12 +88,14 @@ const AppHeader = () => {
                     <div className="page-header__top">
                         <div className="page-header__toggle" onClick={() => {
                             setOpenDrawer(true)
-                        }}>☰</div>
+                        }}>☰
+                        </div>
                         <div className='page-header__logo'>
                             <span className='logo'>
-                                <span onClick={() => navigate('/')}> <FaReact className='rotate icon-react' />Edan Shop</span>
+                                <span onClick={() => navigate('/')}> <FaReact
+                                    className='rotate icon-react'/>Edan Shop</span>
 
-                                <VscSearchFuzzy className='icon-search' />
+                                <VscSearchFuzzy className='icon-search'/>
                             </span>
                             <input
                                 className="input-search" type={'text'}
@@ -114,18 +122,18 @@ const AppHeader = () => {
                                         size={"small"}
                                         showZero
                                     >
-                                        <FiShoppingCart className='icon-cart' />
+                                        <FiShoppingCart className='icon-cart'/>
                                     </Badge>
                                 </Popover>
                             </li>
-                            <li className="navigation__item mobile"><Divider type='vertical' /></li>
+                            <li className="navigation__item mobile"><Divider type='vertical'/></li>
                             <li className="navigation__item mobile">
                                 {!isAuthenticated ?
                                     <span onClick={() => navigate('/login')}> Tài Khoản</span>
                                     :
-                                    <Dropdown menu={{ items }} trigger={['click']}>
-                                        <Space >
-                                            <Avatar src={urlAvatar} />
+                                    <Dropdown menu={{items}} trigger={['click']}>
+                                        <Space>
+                                            <Avatar src={urlAvatar}/>
                                             {user?.fullName}
                                         </Space>
                                     </Dropdown>
@@ -142,10 +150,10 @@ const AppHeader = () => {
                 open={openDrawer}
             >
                 <p>Quản lý tài khoản</p>
-                <Divider />
+                <Divider/>
 
-                <p>Đăng xuất</p>
-                <Divider />
+                <p onClick={()=>handleLogout()}>Đăng xuất</p>
+                <Divider/>
             </Drawer>
 
         </>

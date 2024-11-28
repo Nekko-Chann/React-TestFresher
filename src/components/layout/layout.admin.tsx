@@ -12,6 +12,7 @@ import {
     TeamOutlined,
     UserOutlined
 } from "@ant-design/icons";
+import {logoutAPI} from "services/api";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -20,10 +21,15 @@ const {Content, Footer, Sider} = Layout;
 const LayoutAdmin = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [activeMenu, setActiveMenu] = useState('dashboard');
-    const {user} = useCurrentApp();
+    const {user, setUser,isAuthenticated, setIsAuthenticated} = useCurrentApp();
 
     const handleLogout = async () => {
-        //todo
+        const res = await logoutAPI();
+        if(res.data) {
+            setUser(null);
+            setIsAuthenticated(false);
+            localStorage.removeItem('access_token');
+        }
     }
 
     const items: MenuItem[] = [
@@ -75,10 +81,26 @@ const LayoutAdmin = () => {
             >Đăng xuất</label>,
             key: 'logout',
         },
-
     ];
 
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+
+    if(!isAuthenticated){
+        return (
+            <Outlet/>
+        )
+    }
+
+    const isAdminRouter = location.pathname.includes('/admin');
+    if(isAuthenticated&&isAdminRouter){
+        const role = user?.role;
+        if(role !== "ADMIN"){
+            return (
+                <Outlet/>
+            )
+        }
+    }
+
     return (
         <>
             <Layout
