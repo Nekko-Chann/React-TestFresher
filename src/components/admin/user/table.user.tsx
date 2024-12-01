@@ -8,6 +8,7 @@ import UserDetail from "components/admin/user/detail.user";
 import CreateUser from "components/admin/user/create.user";
 import ImportUser from "components/admin/user/data/import.user";
 import {CSVLink} from "react-csv";
+import UpdateUser from "components/admin/user/update.user.tsx";
 
 interface ISearch {
     fullName: string;
@@ -23,7 +24,9 @@ const TableUser = () => {
     const actionRef = useRef<ActionType>();
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
     const [dataUser, setDataUser] = useState<IUserTable | null>(null);
+    const [dataUpdateUser, setDataUpdateUser] = useState<IUserTable | null>(null);
     const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
+    const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
     const [openModalImport, setOpenModalImport] = useState<boolean>(false);
     const [currentDataTable, setCurrentDataTable] = useState<IUserTable[]>([]);
 
@@ -111,10 +114,14 @@ const TableUser = () => {
         {
             title: 'Action',
             hideInSearch: true,
-            render() {
+            render(_, entity) {
                 return (
                     <>
                         <EditTwoTone
+                            onClick={() => {
+                                setOpenModalUpdate(true)
+                                setDataUpdateUser(entity);
+                            }}
                             twoToneColor="#f57800"
                             style={{cursor: "pointer", marginRight: 15}}
                         />
@@ -163,13 +170,11 @@ const TableUser = () => {
                     }
                     if (sort && sort.createdAt) {
                         query += `&sort=${sort.createdAt === 'ascend' ? 'createdAt' : '-createdAt'}`;
-                    }else{
+                    } else {
                         query += `&sort=-createdAt`;
                     }
                     if (sort && sort.updatedAt) {
                         query += `&sort=${sort.updatedAt === 'ascend' ? 'updatedAt' : '-updatedAt'}`
-                    }else{
-                        query += `&sort=-updatedAt`;
                     }
                     const res = await getUsersAPI(query);
                     if (res.data) {
@@ -204,7 +209,7 @@ const TableUser = () => {
                 toolBarRender={() => [
                     <Button
                         key="button"
-                        icon={<ExportOutlined />}
+                        icon={<ExportOutlined/>}
                         type="primary"
                     >
                         <CSVLink
@@ -216,7 +221,7 @@ const TableUser = () => {
                     </Button>,
                     <Button
                         key="button"
-                        icon={<CloudUploadOutlined />}
+                        icon={<CloudUploadOutlined/>}
                         onClick={() => {
                             setOpenModalImport(true);
                         }}
@@ -245,6 +250,13 @@ const TableUser = () => {
             <CreateUser
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
+                refreshTable={refreshTable}
+            />
+            <UpdateUser
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+                dataUpdateUser={dataUpdateUser}
+                setDataUpdateUser={setDataUpdateUser}
                 refreshTable={refreshTable}
             />
             <UserDetail
