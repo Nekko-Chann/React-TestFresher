@@ -2,11 +2,11 @@ import {ActionType, ProColumns, ProTable} from "@ant-design/pro-components";
 import {Button} from "antd";
 import {useRef, useState} from "react";
 import {CloudUploadOutlined, DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined} from "@ant-design/icons";
-import {getUsersAPI} from "services/api.ts";
-import {dateRangeValidate} from "services/helper.ts";
-import UserDetail from "components/admin/user/detail.user.tsx";
-import CreateUser from "components/admin/user/create.user.tsx";
-import ImportUser from "components/admin/user/data/import.user.tsx";
+import {getUsersAPI} from "services/api";
+import {dateRangeValidate} from "services/helper";
+import UserDetail from "components/admin/user/detail.user";
+import CreateUser from "components/admin/user/create.user";
+import ImportUser from "components/admin/user/data/import.user";
 
 interface ISearch {
     fullName: string;
@@ -159,12 +159,15 @@ const TableUser = () => {
                             query += `&createdAt>=${updateDateRange[0]}&createdAt<=${updateDateRange[1]}`
                         }
                     }
-                    query += `&sort=-createdAt`
                     if (sort && sort.createdAt) {
-                        query += `&sort=${sort.createdAt === 'ascend' ? 'createdAt' : '-createdAt'}`
+                        query += `&sort=${sort.createdAt === 'ascend' ? 'createdAt' : '-createdAt'}`;
+                    }else{
+                        query += `&sort=-createdAt`;
                     }
                     if (sort && sort.updatedAt) {
                         query += `&sort=${sort.updatedAt === 'ascend' ? 'updatedAt' : '-updatedAt'}`
+                    }else{
+                        query += `&sort=-updatedAt`;
                     }
                     const res = await getUsersAPI(query);
                     if (res.data) {

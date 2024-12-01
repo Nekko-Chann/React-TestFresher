@@ -1,6 +1,6 @@
 import {App, Form, FormProps, Input, Modal} from "antd";
 import {useState} from "react";
-import {createUserAPI} from "services/api.ts";
+import {createUserAPI} from "services/api";
 
 interface IProps {
     openModalCreate: boolean;

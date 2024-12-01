@@ -1,6 +1,6 @@
 import {Avatar, Badge, Descriptions, Drawer} from "antd";
 import dayjs from "dayjs";
-import {FORMATE_DATE_VN} from "services/helper.ts";
+import {FORMATE_DATE_VN} from "services/helper";
 
 interface IProps {
     openDrawer: boolean;

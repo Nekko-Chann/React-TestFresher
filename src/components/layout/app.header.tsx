@@ -7,7 +7,7 @@ import {VscSearchFuzzy} from "react-icons/vsc";
 import {Avatar, Badge, Divider, Drawer, Dropdown, Popover, Space} from "antd";
 import {FiShoppingCart} from "react-icons/fi";
 import 'styles/app.header.scss'
-import {logoutAPI} from "services/api.ts";
+import {logoutAPI} from "services/api";
 
 const AppHeader = () => {
     const {user, setUser, isAuthenticated, setIsAuthenticated} = useCurrentApp();

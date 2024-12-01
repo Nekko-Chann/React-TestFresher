@@ -3,7 +3,8 @@ import {InboxOutlined} from "@ant-design/icons";
 import Exceljs from "exceljs";
 import {Buffer} from "buffer";
 import {useState} from "react";
-import {bulkCreateUserAPI} from "services/api.ts";
+import {bulkCreateUserAPI} from "services/api";
+import templateFile from "assets/template/templateUser.xlsx?url";
 
 interface IProps {
     openModalImport: boolean;
@@ -107,7 +108,7 @@ const ImportUser = (props: IProps) => {
         const res = await bulkCreateUserAPI(dataSubmit);
         if(res.data){
             notification.success({
-                message: "Import Success!",
+                message: "Import Success",
                 description: `Thành công: ${res.data.countSuccess}. Thất bại: ${res.data.countError}`
             })
         }
@@ -137,15 +138,20 @@ const ImportUser = (props: IProps) => {
                 </p>
                 <p className="ant-upload-text">Click or drag file to this area to upload</p>
                 <p className="ant-upload-hint">
-                    Support for a single upload. Only accept .csv, .xls, .xlsx file.
+                    Support for a single upload. Only accept .csv, .xls, .xlsx file. &nbsp;
+                    <a
+                        onClick={event => event.stopPropagation()}
+                        href={templateFile}
+                        download
+                    >Download Sample File</a>
                 </p>
             </Dragger>
             <div style={{marginTop: "20px"}}>
                 <Table
-                    rowKey="id"
-                    pagination={false}
                     title={() => <span>Dữ liệu upload:</span>}
                     dataSource={dataImport}
+                    rowKey="id"
+                    pagination={false}
                     columns={[
                         {dataIndex: 'fullName', title: 'Tên Hiển Thị'},
                         {dataIndex: 'email', title: 'Email'},

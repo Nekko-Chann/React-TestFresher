@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {App, Button, Divider, Form, FormProps, Input} from "antd";
 import {Link, useNavigate} from "react-router-dom";
-import {loginAPI} from "services/api.ts";
+import {loginAPI} from "services/api";
 
 import 'styles/login.scss';
 import {useCurrentApp} from "components/context/app.context.tsx";

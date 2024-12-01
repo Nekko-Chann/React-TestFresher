@@ -1,7 +1,7 @@
 import {Button, Form, Input, Divider,FormProps, App} from 'antd';
 import {Link, useNavigate} from 'react-router-dom';
 import {useState} from "react";
-import {registerAPI} from "services/api.ts";
+import {registerAPI} from "services/api";
 
 import 'styles/register.scss';
 
