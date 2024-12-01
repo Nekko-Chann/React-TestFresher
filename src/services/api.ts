@@ -47,6 +47,11 @@ const updateUserAPI = (_id: string, fullName: string, phone: number) => {
     return axios.put<IBackendRes<IRegister>>(urlBackend, data);
 }
 
+const deleteUserAPI = (_id: string) => {
+    const urlBackend = `/api/v1/user/${_id}`;
+    return axios.delete<IBackendRes<IRegister>>(urlBackend)
+}
+
 const bulkCreateUserAPI = (
     info: {
         fullName: string,
@@ -59,5 +64,6 @@ const bulkCreateUserAPI = (
 }
 
 export {
-    loginAPI, registerAPI, fetchAccountAPI, logoutAPI, getUsersAPI, createUserAPI, updateUserAPI, bulkCreateUserAPI
+    loginAPI, registerAPI, fetchAccountAPI, logoutAPI, getUsersAPI, createUserAPI, updateUserAPI, bulkCreateUserAPI,
+    deleteUserAPI
 }
