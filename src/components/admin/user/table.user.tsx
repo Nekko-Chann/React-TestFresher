@@ -229,6 +229,7 @@ const TableUser = () => {
             <ImportUser
                 openModalImport={openModalImport}
                 setOpenModalImport={setOpenModalImport}
+                refreshTable={refreshTable}
             />
             <CreateUser
                 openModalCreate={openModalCreate}
