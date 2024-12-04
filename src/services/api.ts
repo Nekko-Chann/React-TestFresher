@@ -49,7 +49,7 @@ const updateUserAPI = (_id: string, fullName: string, phone: number) => {
 
 const deleteUserAPI = (_id: string) => {
     const urlBackend = `/api/v1/user/${_id}`;
-    return axios.delete<IBackendRes<IRegister>>(urlBackend)
+    return axios.delete<IBackendRes<IRegister>>(urlBackend);
 }
 
 const bulkCreateUserAPI = (
@@ -88,6 +88,11 @@ const updateBookAPI = (
     return axios.put<IBackendRes<IBookTable>>(urlBackend, data);
 }
 
+const deleteBookAPI = (_id: string) => {
+    const urlBackend = `/api/v1/book/${_id}`;
+    return axios.delete<IBackendRes<IBookTable>>(urlBackend)
+}
+
 const getCategoryAPI = () => {
     const urlBackend = `/api/v1/database/category`;
     return axios.get<IBackendRes<string[]>>(urlBackend);
@@ -112,5 +117,5 @@ const uploadFileAPI = (fileImg: any, folder: string) => {
 export {
     loginAPI, registerAPI, fetchAccountAPI, logoutAPI,
     getUsersAPI, createUserAPI, updateUserAPI, bulkCreateUserAPI, deleteUserAPI,
-    getBooksAPI, getCategoryAPI, uploadFileAPI, createBookAPI, updateBookAPI
+    getBooksAPI, getCategoryAPI, uploadFileAPI, createBookAPI, updateBookAPI, deleteBookAPI
 }

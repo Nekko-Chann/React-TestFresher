@@ -1,9 +1,9 @@
 import {useRef, useState} from "react";
 import {ActionType, ProColumns, ProTable} from "@ant-design/pro-components";
 import {DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined} from "@ant-design/icons";
-import {Button, Popconfirm} from "antd";
+import {App, Button, Popconfirm} from "antd";
 import {dateRangeValidate} from "services/helper";
-import {getBooksAPI} from "services/api";
+import {deleteBookAPI, getBooksAPI} from "services/api";
 import {CSVLink} from "react-csv";
 import CreateBook from "components/admin/book/create.book";
 import BookDetail from "components/admin/book/detail.book";
@@ -26,9 +26,12 @@ const TableBook = () => {
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
     const [dataBook, setDataBook] = useState<IBookTable | null>(null);
     const [dataUpdateBook, setDataUpdateBook] = useState<IBookTable | null>(null);
+    const [deleteBook, setDeleteBook] = useState<boolean>(false);
     const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
     const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
     const [currentDataTable, setCurrentDataTable] = useState<IBookTable[]>([]);
+
+    const {message, notification} = App.useApp();
 
     const [meta, setMeta] = useState({
         current: 1,
@@ -39,6 +42,20 @@ const TableBook = () => {
 
     const refreshTable = () => {
         actionRef.current?.reload();
+    }
+
+    const handleDeleteBook = async (_id: string) => {
+        setDeleteBook(true);
+        const res = await deleteBookAPI(_id);
+        if (res && res.data) {
+            message.success('Xóa book thành công');
+            refreshTable();
+        } else {
+            notification.error({
+                message: 'Đã có lỗi xảy ra',
+                description: res.message
+            })
+        }
     }
 
     const columns: ProColumns<IBookTable>[] = [
@@ -148,11 +165,11 @@ const TableBook = () => {
                         <Popconfirm
                             title="Delete the task"
                             description="Are you sure to delete this task?"
-                            // onConfirm={() => handleDeleteUser(entity._id)}
+                            onConfirm={() => handleDeleteBook(entity._id)}
                             okText="Yes"
                             cancelText="No"
                             okButtonProps={{
-                                // loading: isDeleteUser,
+                                loading: deleteBook,
                             }}
                         >
                             <DeleteTwoTone
