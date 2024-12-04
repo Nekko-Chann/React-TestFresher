@@ -7,6 +7,7 @@ import {getBooksAPI} from "services/api";
 import {CSVLink} from "react-csv";
 import CreateBook from "components/admin/book/create.book";
 import BookDetail from "components/admin/book/detail.book";
+import UpdateBook from "components/admin/book/update.book";
 
 interface ISearch {
     mainText: string;
@@ -24,7 +25,9 @@ const TableBook = () => {
     const actionRef = useRef<ActionType>();
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
     const [dataBook, setDataBook] = useState<IBookTable | null>(null);
+    const [dataUpdateBook, setDataUpdateBook] = useState<IBookTable | null>(null);
     const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
+    const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
     const [currentDataTable, setCurrentDataTable] = useState<IBookTable[]>([]);
 
     const [meta, setMeta] = useState({
@@ -131,13 +134,13 @@ const TableBook = () => {
         {
             title: 'Action',
             hideInSearch: true,
-            render() {
+            render(_, entity) {
                 return (
                     <>
                         <EditTwoTone
                             onClick={() => {
-                                // setOpenModalUpdate(true)
-                                // setDataUpdateUser(entity);
+                                setOpenModalUpdate(true)
+                                setDataUpdateBook(entity);
                             }}
                             twoToneColor="#f57800"
                             style={{cursor: "pointer", marginRight: 15}}
@@ -274,6 +277,13 @@ const TableBook = () => {
             <CreateBook
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
+                refreshTable={refreshTable}
+            />
+            <UpdateBook
+                dataUpdateBook={dataUpdateBook}
+                setDataUpdateBook={setDataUpdateBook}
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
                 refreshTable={refreshTable}
             />
             <BookDetail
