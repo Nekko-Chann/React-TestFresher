@@ -5,12 +5,15 @@ import {
     UploadProps
 } from "antd";
 import {useEffect, useState} from "react";
-import {getCategoryAPI} from "services/api";
+import {createBookAPI, getCategoryAPI, uploadFileAPI} from "services/api";
 import {UploadChangeParam} from "antd/es/upload";
 import {MAX_UPLOAD_IMAGE_SIZE} from "services/helper";
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
+import {UploadRequestOption as RcCustomRequestOptions} from 'rc-upload/lib/interface';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+type UserUploadType = "thumbnail" | "slider";
 
 interface IProps {
     openModalCreate: boolean;
@@ -28,8 +31,15 @@ interface FieldType {
     slider: string[];
 }
 
+interface UploadedFile {
+    uid: string;
+    name: string;
+    status: "done";
+    url: string;
+}
+
 const CreateBook = (props: IProps) => {
-    const {openModalCreate, setOpenModalCreate} = props;
+    const {openModalCreate, setOpenModalCreate, refreshTable} = props;
     const [listCategory, setListCategory] = useState<{
         label: string;
         value: string;
@@ -39,10 +49,12 @@ const CreateBook = (props: IProps) => {
     const [loadingSlider, setLoadingSlider] = useState<boolean>(false);
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [previewImage, setPreviewImage] = useState<string>('');
+    const [fileListThumbnail, setFileListThumbnail] = useState<UploadFile[]>([]);
+    const [fileListSlider, setFileListSlider] = useState<UploadFile[]>([]);
 
     const [form] = Form.useForm();
 
-    const {message} = App.useApp();
+    const {message, notification} = App.useApp();
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -62,12 +74,30 @@ const CreateBook = (props: IProps) => {
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         setIsSubmit(true);
-        console.log(values);
+        const {mainText, author, price, quantity, category} = values;
+        const thumbnail = fileListThumbnail?.[0].name ?? "";
+        const slider = fileListSlider?.map(item => item.name) ?? [];
+        const res = await createBookAPI(mainText, author, price, quantity, category, thumbnail, slider);
+        if (res && res.data) {
+            message.success("Thêm mới book thành công");
+            form.resetFields();
+            setFileListThumbnail([]);
+            setFileListSlider([]);
+            setOpenModalCreate(false);
+            refreshTable();
+        }else{
+            notification.error({
+                message: "Thêm mới book thất bại",
+                description: res.message
+            })
+        }
         setIsSubmit(false);
     }
 
     const onClose = () => {
         form.resetFields();
+        setFileListSlider([]);
+        setFileListThumbnail([]);
         setOpenModalCreate(false);
     }
 
@@ -89,7 +119,7 @@ const CreateBook = (props: IProps) => {
         if (!isLt2M) {
             message.error(`Image must smaller than ${MAX_UPLOAD_IMAGE_SIZE}MB!`);
         }
-        return isJpgOrPng && isLt2M;
+        return isJpgOrPng && isLt2M || Upload.LIST_IGNORE;
     };
 
     const handlePreview = async (file: UploadFile) => {
@@ -100,7 +130,17 @@ const CreateBook = (props: IProps) => {
         setPreviewOpen(true);
     };
 
-    const handleChange = (info: UploadChangeParam, type: "thumbnail" | "slider") => {
+    const handleRemove = async (file: UploadFile, type: UserUploadType) => {
+        if (type === 'thumbnail') {
+            setFileListThumbnail([])
+        }
+        if (type === 'slider') {
+            const newSlider = fileListSlider.filter(x => x.uid !== file.uid);
+            setFileListSlider(newSlider);
+        }
+    };
+
+    const handleChange = (info: UploadChangeParam, type: UserUploadType) => {
         if (info.file.status === 'uploading') {
             if (type === "slider") {
                 setLoadingSlider(true);
@@ -119,11 +159,28 @@ const CreateBook = (props: IProps) => {
         }
     };
 
-    const handleUploadFile: UploadProps['customRequest'] = ({onSuccess}) => {
-        setTimeout(() => {
-            if (onSuccess)
+    const handleUploadFile = async (options: RcCustomRequestOptions, type: UserUploadType) => {
+        const {onSuccess} = options;
+        const file = options.file as UploadFile;
+        const res = await uploadFileAPI(file, "book");
+        if (res && res.data) {
+            const uploadedFile: UploadedFile = {
+                uid: file.uid,
+                name: res.data.fileUploaded,
+                status: "done",
+                url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${res.data.fileUploaded}`
+            }
+            if (type === "thumbnail") {
+                setFileListThumbnail([{...uploadedFile}]);
+            } else {
+                setFileListSlider((prevState) => [...prevState, {...uploadedFile}]);
+            }
+            if (onSuccess) {
                 onSuccess("ok");
-        }, 1000);
+            } else {
+                message.error(res.message);
+            }
+        }
     };
 
     const normFile = (event: UploadChangeParam<UploadFile>): UploadFile[] | undefined => {
@@ -189,7 +246,6 @@ const CreateBook = (props: IProps) => {
                                     style={{width: '100%'}}
                                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     addonAfter=" đ"
-                                    type="number"
                                 />
                             </Form.Item>
                         </Col>
@@ -229,7 +285,7 @@ const CreateBook = (props: IProps) => {
                                 labelCol={{span: 24}}
                                 label="Ảnh Thumbnail"
                                 name="thumbnail"
-                                rules={[{required: true, message: 'Vui lòng nhập upload thumbnail!'}]}
+                                rules={[{required: true, message: 'Vui lòng upload thumbnail!'}]}
                                 //convert value from Upload => form
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
@@ -239,10 +295,12 @@ const CreateBook = (props: IProps) => {
                                     className="avatar-uploader"
                                     maxCount={1}
                                     multiple={false}
-                                    customRequest={handleUploadFile}
+                                    customRequest={(options) => handleUploadFile(options, 'thumbnail')}
                                     beforeUpload={beforeUpload}
                                     onChange={(info) => handleChange(info, 'thumbnail')}
                                     onPreview={handlePreview}
+                                    onRemove={(file) => handleRemove(file, 'thumbnail')}
+                                    fileList={fileListThumbnail}
                                 >
                                     <div>
                                         {loadingThumbnail ? <LoadingOutlined/> : <PlusOutlined/>}
@@ -256,7 +314,7 @@ const CreateBook = (props: IProps) => {
                                 labelCol={{span: 24}}
                                 label="Ảnh Slider"
                                 name="slider"
-                                rules={[{required: true, message: 'Vui lòng nhập upload slider!'}]}
+                                rules={[{required: true, message: 'Vui lòng upload slider!'}]}
                                 //convert value from Upload => form
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
@@ -265,10 +323,12 @@ const CreateBook = (props: IProps) => {
                                     multiple
                                     listType="picture-card"
                                     className="avatar-uploader"
-                                    customRequest={handleUploadFile}
+                                    customRequest={(options) => handleUploadFile(options, 'slider')}
                                     beforeUpload={beforeUpload}
                                     onChange={(info) => handleChange(info, 'slider')}
                                     onPreview={handlePreview}
+                                    onRemove={(file) => handleRemove(file, 'slider')}
+                                    fileList={fileListSlider}
                                 >
                                     <div>
                                         {loadingSlider ? <LoadingOutlined/> : <PlusOutlined/>}
