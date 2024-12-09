@@ -110,7 +110,7 @@ const UpdateBook = (props: IProps) => {
         const slider = fileListSlider?.map(item => item.name) ?? [];
         const res = await updateBookAPI(_id, mainText, author, price, quantity, category, thumbnail, slider);
         if (res && res.data) {
-            message.success("Thêm mới book thành công");
+            message.success("Cập nhật book thành công");
             form.resetFields();
             setFileListThumbnail([]);
             setFileListSlider([]);
@@ -119,7 +119,7 @@ const UpdateBook = (props: IProps) => {
             refreshTable();
         } else {
             notification.error({
-                message: "Thêm mới book thất bại",
+                message: "Cập nhật book thất bại",
                 description: res.message
             })
         }
@@ -226,13 +226,13 @@ const UpdateBook = (props: IProps) => {
     return (
         <>
             <Modal
-                title="Thêm mới book"
+                title="Cập nhật book"
                 open={openModalUpdate}
                 onOk={() => form.submit()
                 }
                 onCancel={onClose}
                 destroyOnClose={true}
-                okText={"Tạo mới"}
+                okText={"Cập nhật"}
                 cancelText={"Hủy"}
                 confirmLoading={isSubmit}
                 width={"40vw"}
