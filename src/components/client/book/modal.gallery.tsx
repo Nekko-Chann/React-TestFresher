@@ -51,7 +51,7 @@ const ModalGallery = (props: IProps) => {
                     />
                 </Col>
                 <Col span={8}>
-                    <div>{title}</div>
+                    <div style={{ padding: "5px 0 20px 0" }}>{title}</div>
                     <div>
                         <Row gutter={[20, 20]}>
                             {
