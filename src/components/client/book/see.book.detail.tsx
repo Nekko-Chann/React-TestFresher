@@ -1,17 +1,18 @@
 import {useEffect, useRef, useState} from "react";
 import ImageGallery from 'react-image-gallery';
-import {Col, Divider, Rate, Row} from "antd";
+import {App, Col, Divider, Rate, Row} from "antd";
 import {MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {BsCartPlus} from "react-icons/bs";
 import ModalGallery from './modal.gallery';
 
 import 'styles/book.scss';
+import {useCurrentApp} from "components/context/app.context";
+
+type UserAction = 'MINUS' | 'PLUS';
 
 interface IProps {
     currentBook: IBookTable | null;
 }
-
-type UserAction = 'MINUS' | 'PLUS';
 
 const SeeBookDetail = (props: IProps) => {
     const {currentBook} = props;
@@ -25,6 +26,8 @@ const SeeBookDetail = (props: IProps) => {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const refGallery = useRef<ImageGallery>(null);
     const [currentQuantity, setCurrentQuantity] = useState<number>(1);
+    const {setCarts} = useCurrentApp();
+    const {message} = App.useApp();
 
     useEffect(() => {
         if (currentBook) {
@@ -81,6 +84,37 @@ const SeeBookDetail = (props: IProps) => {
                 setCurrentQuantity(+value);
             }
         }
+    }
+
+    const handleAddToCart = () => {
+        //update localStorage
+        const cartStorage = localStorage.getItem("carts");
+        if (cartStorage && currentBook) {
+            //update
+            const carts = JSON.parse(cartStorage) as ICart[];
+            //check exits
+            const isExistIndex = carts.findIndex(item => item._id === currentBook?._id);
+            if (isExistIndex > -1) {
+                carts[isExistIndex].quantity = carts[isExistIndex].quantity + currentQuantity;
+            } else {
+                carts.push({
+                    quantity: currentQuantity,
+                    _id: currentBook._id,
+                    detail: currentBook
+                })
+            }
+            localStorage.setItem("carts", JSON.stringify(carts));
+            setCarts(carts);
+        } else {
+            const data = [{
+                _id: currentBook?._id as string,
+                quantity: currentQuantity,
+                detail: currentBook!
+            }];
+            localStorage.setItem("carts", JSON.stringify(data));
+            setCarts(data);
+        }
+        message.success("Thêm sản phầm vào giỏ hàng thành công.");
     }
 
     return (
@@ -148,7 +182,7 @@ const SeeBookDetail = (props: IProps) => {
                                     </span>
                                 </div>
                                 <div className='buy'>
-                                    <button className='cart'>
+                                    <button className='cart' onClick={() => handleAddToCart()}>
                                         <BsCartPlus className='icon-cart'/>
                                         <span>Thêm vào giỏ hàng</span>
                                     </button>
