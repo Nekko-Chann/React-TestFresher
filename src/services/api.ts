@@ -25,7 +25,7 @@ const fetchAccountAPI = () => {
     const urlBackend = "/api/v1/auth/account";
     return axios.get<IBackendRes<IFetchAccount>>(urlBackend, {
         headers: {
-            delay: 1500
+            delay: 1000
         }
     });
 }
@@ -103,7 +103,7 @@ const getBookByIdAPI = (id: string) => {
     return axios.get<IBackendRes<IBookTable>>(urlBackend,
         {
             headers: {
-                delay: 3000
+                delay: 1000
             }
         }
     )
@@ -130,9 +130,19 @@ const uploadFileAPI = (fileImg: any, folder: string) => {
     });
 }
 
+const createOrderAPI = (
+    name: string, address: string,
+    phone: number, totalPrice: number,
+    type: string, detail: []
+) => {
+    const data = {name, address, phone, totalPrice, type, detail};
+    const urlBackend = `/api/v1/order`;
+    return axios.post<IBackendRes<IOrder>>(urlBackend, data);
+}
+
 export {
     loginAPI, registerAPI, fetchAccountAPI, logoutAPI,
     getUsersAPI, createUserAPI, updateUserAPI, bulkCreateUserAPI, deleteUserAPI,
     getBooksAPI, getCategoryAPI, uploadFileAPI, createBookAPI, updateBookAPI, deleteBookAPI,
-    getBookByIdAPI
+    getBookByIdAPI, createOrderAPI
 }
