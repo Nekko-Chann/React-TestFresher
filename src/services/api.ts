@@ -47,6 +47,23 @@ const updateUserAPI = (_id: string, fullName: string, phone: number) => {
     return axios.put<IBackendRes<IRegister>>(urlBackend, data);
 }
 
+const updateUserInfoAPI = (
+    _id: string, fullName: string,
+    phone: number, avatar: string,
+) => {
+    const data = {_id, fullName, phone, avatar}
+    const urlBackend = "/api/v1/user";
+    return axios.put<IBackendRes<IRegister>>(urlBackend, data);
+}
+
+const updateUserPasswordAPI = (
+    email: string, oldpass: string, newpass: string
+) => {
+    const data = {email, oldpass, newpass};
+    const urlBackend = "/api/v1/user/change-password";
+    return axios.post<IBackendRes<IRegister>>(urlBackend, data);
+}
+
 const deleteUserAPI = (_id: string) => {
     const urlBackend = `/api/v1/user/${_id}`;
     return axios.delete<IBackendRes<IRegister>>(urlBackend);
@@ -146,8 +163,9 @@ const getHistoryAPI = () => {
 }
 
 export {
-    loginAPI, registerAPI, fetchAccountAPI, logoutAPI,
-    getUsersAPI, createUserAPI, updateUserAPI, bulkCreateUserAPI, deleteUserAPI,
-    getBooksAPI, getCategoryAPI, uploadFileAPI, createBookAPI, updateBookAPI, deleteBookAPI,
-    getBookByIdAPI, createOrderAPI, getHistoryAPI
+    loginAPI, registerAPI, fetchAccountAPI, logoutAPI, getUsersAPI,
+    createUserAPI, updateUserAPI, updateUserInfoAPI, updateUserPasswordAPI, bulkCreateUserAPI,
+    deleteUserAPI, getBooksAPI, getCategoryAPI, uploadFileAPI,
+    createBookAPI, updateBookAPI, deleteBookAPI, getBookByIdAPI, createOrderAPI,
+    getHistoryAPI
 }

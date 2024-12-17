@@ -6,12 +6,14 @@ import {FaReact} from "react-icons/fa";
 import {VscSearchFuzzy} from "react-icons/vsc";
 import {Avatar, Badge, Divider, Drawer, Dropdown, Empty, Popover, Space} from "antd";
 import {FiShoppingCart} from "react-icons/fi";
-import 'styles/app.header.scss'
 import {logoutAPI} from "services/api";
+import ManageAccount from "components/client/account/manage.account";
+import 'styles/app.header.scss';
 
 const AppHeader = () => {
     const {user, setUser, isAuthenticated, setIsAuthenticated, carts} = useCurrentApp();
-    const [openDrawer, setOpenDrawer] = useState(false)
+    const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+    const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -27,7 +29,7 @@ const AppHeader = () => {
         {
             label: <label
                 style={{cursor: 'pointer'}}
-                onClick={() => alert("me")}
+                onClick={() => setOpenManageAccount(true)}
             >Quản lý tài khoản</label>,
             key: 'account',
         },
@@ -44,12 +46,14 @@ const AppHeader = () => {
         },
 
     ];
+
     if (user?.role === 'ADMIN') {
         items.unshift({
             label: <Link to='/admin'>Trang quản trị</Link>,
             key: 'admin',
         })
     }
+
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
 
     const contentPopover = () => {
@@ -59,10 +63,14 @@ const AppHeader = () => {
                     {carts?.map((book, index) => {
                         return (
                             <div className='book' key={`book-${index}`}>
-                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${book?.detail?.thumbnail}`} alt={book?.detail?.thumbnail}/>
+                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${book?.detail?.thumbnail}`}
+                                     alt={book?.detail?.thumbnail}/>
                                 <div>{book?.detail?.mainText}</div>
                                 <div className='price'>
-                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book?.detail?.price ?? 0)}
+                                    {new Intl.NumberFormat('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    }).format(book?.detail?.price ?? 0)}
                                 </div>
                             </div>
                         )
@@ -151,10 +159,13 @@ const AppHeader = () => {
                 <p>Quản lý tài khoản</p>
                 <Divider/>
 
-                <p onClick={()=>handleLogout()}>Đăng xuất</p>
+                <p onClick={() => handleLogout()}>Đăng xuất</p>
                 <Divider/>
             </Drawer>
-
+            <ManageAccount
+                openManageAccount={openManageAccount}
+                setOpenManageAccount={setOpenManageAccount}
+            />
         </>
     )
 }
