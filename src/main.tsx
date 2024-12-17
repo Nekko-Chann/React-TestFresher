@@ -7,7 +7,6 @@ import BookPage from 'pages/client/book';
 import AboutPage from 'pages/client/about';
 import LoginPage from 'pages/client/auth/login';
 import RegisterPage from 'pages/client/auth/register';
-import 'styles/global.scss'
 import HomePage from 'pages/client/home';
 import {AppProvider} from "components/context/app.context";
 import ProtectedRoute from "components/auth";
@@ -18,6 +17,8 @@ import ManageOrderPage from "pages/admin/manage.order";
 import ManageUserPage from "pages/admin/manage.user";
 import enUS from 'antd/es/locale/en_US';
 import OrderPage from "pages/client/order";
+
+import 'styles/global.scss'
 
 const router = createBrowserRouter([
     {
@@ -34,7 +35,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "/order",
-                element: <OrderPage/>
+                element: (
+                    <ProtectedRoute>
+                        <OrderPage/>
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "/about",
