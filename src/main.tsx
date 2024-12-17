@@ -17,6 +17,7 @@ import ManageBookPage from "pages/admin/manage.book";
 import ManageOrderPage from "pages/admin/manage.order";
 import ManageUserPage from "pages/admin/manage.user";
 import enUS from 'antd/es/locale/en_US';
+import OrderPage from "pages/client/order";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: "/book/:id",
                 element: <BookPage/>,
+            },
+            {
+                path: "/order",
+                element: <OrderPage/>
             },
             {
                 path: "/about",
@@ -47,13 +52,13 @@ const router = createBrowserRouter([
     },
     {
         path: "admin",
-        element: <LayoutAdmin />,
+        element: <LayoutAdmin/>,
         children: [
             {
                 index: true,
                 element: (
                     <ProtectedRoute>
-                        <DashBoardPage />
+                        <DashBoardPage/>
                     </ProtectedRoute>
                 )
             },
@@ -61,7 +66,7 @@ const router = createBrowserRouter([
                 path: "book",
                 element: (
                     <ProtectedRoute>
-                        <ManageBookPage />
+                        <ManageBookPage/>
                     </ProtectedRoute>
                 )
             },
@@ -69,7 +74,7 @@ const router = createBrowserRouter([
                 path: "order",
                 element: (
                     <ProtectedRoute>
-                        <ManageOrderPage />
+                        <ManageOrderPage/>
                     </ProtectedRoute>
                 )
             },
@@ -77,7 +82,7 @@ const router = createBrowserRouter([
                 path: "user",
                 element: (
                     <ProtectedRoute>
-                        <ManageUserPage />
+                        <ManageUserPage/>
                     </ProtectedRoute>
                 ),
             },
