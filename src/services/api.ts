@@ -140,9 +140,14 @@ const createOrderAPI = (
     return axios.post<IBackendRes<IOrder>>(urlBackend, data);
 }
 
+const getHistoryAPI = () => {
+    const urlBackend = `/api/v1/history`;
+    return axios.get<IBackendRes<IHistory[]>>(urlBackend);
+}
+
 export {
     loginAPI, registerAPI, fetchAccountAPI, logoutAPI,
     getUsersAPI, createUserAPI, updateUserAPI, bulkCreateUserAPI, deleteUserAPI,
     getBooksAPI, getCategoryAPI, uploadFileAPI, createBookAPI, updateBookAPI, deleteBookAPI,
-    getBookByIdAPI, createOrderAPI
+    getBookByIdAPI, createOrderAPI, getHistoryAPI
 }
