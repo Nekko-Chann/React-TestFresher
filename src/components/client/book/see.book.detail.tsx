@@ -11,74 +11,20 @@ interface IProps {
     currentBook: IBookTable | null;
 }
 
-const SeeBookDetail = (props: IProps)=>{
-    const { currentBook } = props;
+type UserAction = 'MINUS' | 'PLUS';
+
+const SeeBookDetail = (props: IProps) => {
+    const {currentBook} = props;
     const [imageGallery, setImageGallery] = useState<{
         original: string;
         thumbnail: string;
         originalClass: string;
         thumbnailClass: string;
     }[]>([]);
-    const [isOpenModalGallery, setIsOpenModalGallery] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isOpenModalGallery, setIsOpenModalGallery] = useState<boolean>(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
     const refGallery = useRef<ImageGallery>(null);
-
-    // const images = [
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    // ];
+    const [currentQuantity, setCurrentQuantity] = useState<number>(1);
 
     useEffect(() => {
         if (currentBook) {
@@ -116,10 +62,32 @@ const SeeBookDetail = (props: IProps)=>{
         setCurrentIndex(refGallery?.current?.getCurrentIndex() ?? 0)
     }
 
+    const handleChangeButton = (type: UserAction) => {
+        if (type === 'MINUS') {
+            if (currentQuantity - 1 > 0) {
+                setCurrentQuantity(currentQuantity - 1);
+            } else return;
+        }
+        if (type === 'PLUS' && currentBook) {
+            if (currentQuantity !== +currentBook.quantity) {
+                setCurrentQuantity(currentQuantity + 1);
+            } else return;
+        }
+    }
+
+    const handleChangeInput = (value: string) => {
+        if (!isNaN(+value)) {
+            if (+value > 0 && currentBook && +value < +currentBook.quantity) {
+                setCurrentQuantity(+value);
+            }
+        }
+    }
+
     return (
-        <div style={{ background: '#efefef', padding: "20px 0" }}>
-            <div className='view-detail-book' style={{ maxWidth: 1440, margin: '0 auto', minHeight: "calc(100vh - 150px)" }}>
-                <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
+        <div style={{background: '#efefef', padding: "20px 0"}}>
+            <div className='view-detail-book'
+                 style={{maxWidth: 1440, margin: '0 auto', minHeight: "calc(100vh - 150px)"}}>
+                <div style={{padding: "20px", background: '#fff', borderRadius: 5}}>
                     <Row gutter={[20, 20]}>
                         <Col md={10} sm={0} xs={0}>
                             <ImageGallery
@@ -146,17 +114,20 @@ const SeeBookDetail = (props: IProps)=>{
                                 />
                             </Col>
                             <Col span={24}>
-                                <div className='author'>Tác giả: <a href='#'>{currentBook?.author}</a> </div>
+                                <div className='author'>Tác giả: <a href='#'>{currentBook?.author}</a></div>
                                 <div className='title'>{currentBook?.mainText}</div>
                                 <div className='rating'>
-                                    <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
+                                    <Rate value={5} disabled style={{color: '#ffce3d', fontSize: 12}}/>
                                     <span className='sold'>
-                                        <Divider type="vertical" />
+                                        <Divider type="vertical"/>
                                         Đã bán {currentBook?.sold ?? 0}</span>
                                 </div>
                                 <div className='price'>
                                     <span className='currency'>
-                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBook?.price ?? 0)}
+                                        {new Intl.NumberFormat('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND'
+                                        }).format(currentBook?.price ?? 0)}
                                     </span>
                                 </div>
                                 <div className='delivery'>
@@ -168,14 +139,17 @@ const SeeBookDetail = (props: IProps)=>{
                                 <div className='quantity'>
                                     <span className='left'>Số lượng</span>
                                     <span className='right'>
-                                        <button ><MinusOutlined /></button>
-                                        <input defaultValue={1} />
-                                        <button><PlusOutlined /></button>
+                                        <button onClick={() => handleChangeButton('MINUS')}><MinusOutlined/></button>
+                                        <input
+                                            onChange={(event) => handleChangeInput(event.target.value)}
+                                            value={currentQuantity}
+                                        />
+                                        <button onClick={() => handleChangeButton('PLUS')}><PlusOutlined/></button>
                                     </span>
                                 </div>
                                 <div className='buy'>
                                     <button className='cart'>
-                                        <BsCartPlus className='icon-cart' />
+                                        <BsCartPlus className='icon-cart'/>
                                         <span>Thêm vào giỏ hàng</span>
                                     </button>
                                     <button className='now'>Mua ngay</button>
