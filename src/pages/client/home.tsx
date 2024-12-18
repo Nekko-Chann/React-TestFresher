@@ -4,10 +4,10 @@ import {
     TabsProps
 } from "antd";
 import {FilterTwoTone, ReloadOutlined} from "@ant-design/icons";
-import 'styles/home.scss'
 import {useEffect, useState} from "react";
-import {getBooksAPI, getCategoryAPI} from "services/api.ts";
-import {useNavigate} from "react-router-dom";
+import {getBooksAPI, getCategoryAPI} from "services/api";
+import {useNavigate, useOutletContext} from "react-router-dom";
+import 'styles/home.scss'
 
 interface FieldType {
     fullName: string;
@@ -22,6 +22,7 @@ interface FieldType {
 }
 
 const HomePage = () => {
+    const [searchTerm] = useOutletContext() as any;
     const [listCategory, setListCategory] = useState<{
         label: string;
         value: string;
@@ -57,13 +58,16 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchBook();
-    }, [current, pageSize, filter, sortQuery]);
+    }, [current, pageSize, filter, sortQuery, searchTerm]);
 
     const fetchBook = async () => {
         setIsLoading(true);
         let query = `current=${current}&pageSize=${pageSize}`;
         if (filter) {
             query += `&${filter}`;
+        }
+        if(searchTerm) {
+            query += `&mainText=/${searchTerm}/i`;
         }
         if (sortQuery) {
             query += `&${sortQuery}`;
@@ -109,10 +113,6 @@ const HomePage = () => {
         }
     }
 
-    // const onChange = (key: string) => {
-    //     console.log(key);
-    // }
-
     const items: TabsProps['items'] = [
         {
             key: 'sort=-sold',
@@ -138,7 +138,7 @@ const HomePage = () => {
 
     return (
         <div style={{background: "#efefef", padding: "20px 0"}}>
-            <div className="homepage" style={{maxWidth: 1440, margin: "0px auto"}}>
+            <div className="homepage" style={{maxWidth: 1440, margin: "0px auto", overflow: 'hidden'}}>
                 <Row gutter={[20, 20]}>
                     <Col md={4} sm={0} xs={0}>
                         <div style={{padding: "20px", background: "#fff", borderRadius: 5}}>
