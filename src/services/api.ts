@@ -1,4 +1,8 @@
-import axios from "services/axios.customize";
+import createInstanceAxios from "services/axios.customize";
+
+const axios = createInstanceAxios(import.meta.env.VITE_BACKEND_URL);
+
+const axiosPayment = createInstanceAxios(import.meta.env.VITE_BACKEND_PAYMENT_URL);
 
 const loginAPI = (username: string, password: string) => {
     const urlBackend = "/api/v1/auth/login";
@@ -150,9 +154,10 @@ const uploadFileAPI = (fileImg: any, folder: string) => {
 const createOrderAPI = (
     name: string, address: string,
     phone: number, totalPrice: number,
-    type: string, detail: object[]
+    type: string, detail: object[],
+    paymentRef?: string
 ) => {
-    const data = {name, address, phone, totalPrice, type, detail};
+    const data = {name, address, phone, totalPrice, type, detail, paymentRef};
     const urlBackend = `/api/v1/order`;
     return axios.post<IBackendRes<IOrder>>(urlBackend, data);
 }
@@ -166,6 +171,7 @@ const getOrdersAPI = (query: string) => {
     const urlBackend = `/api/v1/order?${query}`;
     return axios.get<IBackendRes<IModelPaginate<IOrderTable>>>(urlBackend)
 }
+
 const getDashboardAPI = () => {
     const urlBackend = `/api/v1/database/dashboard`;
     return axios.get<IBackendRes<{
@@ -175,10 +181,26 @@ const getDashboardAPI = () => {
     }>>(urlBackend)
 }
 
+const getVNPayUrlAPI = (amount: number, locale: string, paymentRef: string) => {
+    const data = {amount, locale, paymentRef};
+    const urlBackend = "/vnpay/payment-url";
+    return axiosPayment.post<IBackendRes<{ url: string }>>(urlBackend, data);
+}
+
+const updatePaymentOrderAPI = (paymentStatus: string, paymentRef: string) => {
+    const data = {paymentStatus, paymentRef};
+    const urlBackend = "/api/v1/order/update-payment-status";
+    return axios.post<IBackendRes<ILogin>>(urlBackend, data, {
+        headers: {
+            delay: 1000
+        }
+    });
+}
+
 export {
     loginAPI, registerAPI, fetchAccountAPI, logoutAPI, getUsersAPI,
     createUserAPI, updateUserAPI, updateUserInfoAPI, updateUserPasswordAPI, bulkCreateUserAPI,
     deleteUserAPI, getBooksAPI, getCategoryAPI, uploadFileAPI,
     createBookAPI, updateBookAPI, deleteBookAPI, getBookByIdAPI, createOrderAPI,
-    getHistoryAPI, getOrdersAPI, getDashboardAPI
+    getHistoryAPI, getOrdersAPI, getDashboardAPI, getVNPayUrlAPI, updatePaymentOrderAPI
 }

@@ -4,10 +4,10 @@ import {App, Breadcrumb, Col, Divider, Rate, Row} from "antd";
 import {MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {BsCartPlus} from "react-icons/bs";
 import ModalGallery from './modal.gallery';
-
-import 'styles/book.scss';
 import {useCurrentApp} from "components/context/app.context";
 import {Link, useNavigate} from "react-router-dom";
+
+import 'styles/book.scss';
 
 type UserAction = 'MINUS' | 'PLUS';
 

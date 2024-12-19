@@ -18,6 +18,7 @@ import ManageUserPage from "pages/admin/manage.user";
 import enUS from 'antd/es/locale/en_US';
 import OrderPage from "pages/client/order";
 import HistoryPage from "pages/client/history";
+import ReturnURLPage from "components/client/order/return.url";
 
 import 'styles/global.scss'
 
@@ -39,6 +40,14 @@ const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <OrderPage/>
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "/vnpay/return-url",
+                element: (
+                    <ProtectedRoute>
+                        <ReturnURLPage />
                     </ProtectedRoute>
                 )
             },

@@ -32,11 +32,18 @@ const HistoryPage = () => {
         },
         {
             title: 'Trạng thái',
-            render: () => (
-                <Tag color={"green"}>
-                    Thành công
+            render: (_item, record) => (
+                <Tag color={
+                    record.paymentStatus === "UNPAID"
+                        ? "volcano" : "green"
+                }>
+                    {record.paymentStatus}
                 </Tag>
             )
+        },
+        {
+            title: 'PaymentRef',
+            dataIndex: 'paymentRef',
         },
         {
             title: 'Chi tiết',
@@ -54,6 +61,7 @@ const HistoryPage = () => {
     const [openDetail, setOpenDetail] = useState<boolean>(false);
     const [dataDetail, setDataDetail] = useState<IHistory | null>(null);
     const { notification } = App.useApp();
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
