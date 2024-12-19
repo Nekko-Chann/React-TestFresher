@@ -19,6 +19,7 @@ import enUS from 'antd/es/locale/en_US';
 import OrderPage from "pages/client/order";
 import HistoryPage from "pages/client/history";
 import ReturnURLPage from "components/client/order/return.url";
+import {GoogleOAuthProvider} from '@react-oauth/google';
 
 import 'styles/global.scss'
 
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
                 path: "/vnpay/return-url",
                 element: (
                     <ProtectedRoute>
-                        <ReturnURLPage />
+                        <ReturnURLPage/>
                     </ProtectedRoute>
                 )
             },
@@ -125,9 +126,11 @@ createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <App>
             <AppProvider>
-                <ConfigProvider locale={enUS}>
-                    <RouterProvider router={router}/>
-                </ConfigProvider>
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                    <ConfigProvider locale={enUS}>
+                        <RouterProvider router={router}/>
+                    </ConfigProvider>
+                </GoogleOAuthProvider>
             </AppProvider>
         </App>
     </StrictMode>

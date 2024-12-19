@@ -1,10 +1,13 @@
 import {useState} from "react";
 import {App, Button, Divider, Form, FormProps, Input} from "antd";
 import {Link, useNavigate} from "react-router-dom";
-import {loginAPI} from "services/api";
+import {loginAPI, loginWithGoogleAPI} from "services/api";
+import {useCurrentApp} from "components/context/app.context.tsx";
+import {GooglePlusOutlined} from "@ant-design/icons";
+import {useGoogleLogin} from '@react-oauth/google';
 
 import 'styles/login.scss';
-import {useCurrentApp} from "components/context/app.context.tsx";
+import axios from "axios";
 
 interface FieldType {
     username: string;
@@ -14,7 +17,7 @@ interface FieldType {
 const LoginPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
     const {setUser, setIsAuthenticated} = useCurrentApp();
-    const {message,notification} = App.useApp();
+    const {message, notification} = App.useApp();
     const navigate = useNavigate();
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
@@ -29,18 +32,47 @@ const LoginPage = () => {
         if (res?.data) {
             setUser(res.data.user);
             setIsAuthenticated(true);
-            localStorage.setItem('access_token',res.data.access_token);
+            localStorage.setItem('access_token', res.data.access_token);
             message.success("Đăng nhập thành công!");
             navigate("/");
         } else {
             notification.error({
                 message: "Đăng nhập thất bại",
-                description:
-                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                description: res.message && Array.isArray(res.message) ? res.message[0] : res.message,
                 duration: 5
             })
         }
     };
+
+    const loginGoogle = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            const {data} = await axios(
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse?.access_token}`,
+                    },
+                }
+            );
+            if (data && data.email) {
+                const res = await loginWithGoogleAPI("GOOGLE", data.email);
+                if (res?.data) {
+                    setIsAuthenticated(true);
+                    setUser(res.data.user);
+                    localStorage.setItem('access_token', res.data.access_token);
+                    message.success("Đăng nhập tài khoản thành công!");
+                    navigate("/");
+                } else {
+                    notification.error({
+                        message: "Có lỗi xảy ra",
+                        description: res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                        duration: 5
+                    })
+                }
+            }
+
+        },
+    });
 
     return (
         <div className="login-page">
@@ -85,6 +117,22 @@ const LoginPage = () => {
                                 </Button>
                             </Form.Item>
                             <Divider>Or</Divider>
+                            <div
+                                title="Đăng nhập với Google"
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 10,
+                                    textAlign: "center",
+                                    marginBottom: 25,
+                                    cursor: "pointer",
+                                }}
+                                onClick={() => loginGoogle()}
+                            >
+                                Đăng nhập với
+                                <GooglePlusOutlined style={{color: "orange", fontSize: 30}}/>
+                            </div>
                             <p className="text text-normal" style={{textAlign: "center"}}>
                                 Chưa có tài khoản ?
                                 <span>
