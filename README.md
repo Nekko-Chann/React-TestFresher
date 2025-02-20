@@ -1,29 +1,36 @@
-# React Test Fresher (TS) Starter Template
-React Test Fresher
+## Book Store
 
-### Môi trường chạy dự án: Node.js v20.14.0
-https://nodejs.org/download/release/v20.14.0/
+### I. Thông tin về dự án
+1. Về dự án:
+    - Dự án lấy ý tưởng từ TikiShop. Mục tiêu dự án là tạo ra nền tảng tìm kiếm và đặt sách.
+    - Công nghệ sử dụng: React(TypeScript), Antd
 
-## Về tác giả
-Mọi thông tin về Tác giả Edan Nguyễn, các bạn có thể tìm kiếm tại đây:
+2. Môi trường NodeJS
+   - Môi trường chạy dự án là NodeJS version 20.14.0
 
-Website chính thức: https://react-portfolio-eight-coral.vercel.app/
+3. Demo:
+   - Link Demo sản phẩm tại đây: https://tiki-book-final.vercel.app/
 
-Facebook : https://www.facebook.com/EdanPrince2
+4. Cách chạy dự án:
+   - Các bước cài đặt:
+     + Clone source code.
+     + Cài đặt thư viện: npm i
+     + Update file .env.development (nếu cần thiết)
+     + Chạy dự án: npm run dev
 
-===
+====================================================================
 
-Các bước cài đặt: (chế độ development)
-1. clone code
-2. cài đặt thư viện: npm i
-3. Update file .env.development (nếu cần thiết)
-4. Chạy dự án: npm run dev
+### II. Người thực hiện
+👋👋 Chào bạn, tôi là Kirito Nguyễn!
 
-===
+👀 Tôi đam mê lập trình, đặc biệt là trong lĩnh vực phát triển website và ứng dụng di động.
 
-Cách chạy tại chế độ production:
-1. clone code
-2. cài đặt thư viện: npm i
-3. Update file .env.production (nếu cần thiết)
-4. Build dự án: npm run build
-5. Chạy dự án: npm run preview
+🌱 Hiện tại, tôi đang theo học ngành Công nghệ Thông tin và tập trung vào việc phát triển website và ứng dụng di động.
+
+💞️ Tôi luôn mong muốn tìm kiếm cơ hội hợp tác trong các dự án sáng tạo liên quan đến website và ứng dụng di động.
+
+📫 Bạn có thể tìm kiếm thông tin của tôi trên website: https://minhducnguyen.io.vn
+
+😄 Ngoài lập trình, tôi cũng rất thích ca hát và chơi nhạc cụ – đó là cách tôi thư giãn và sáng tạo!
+
+⚡ Sở thích của tôi là viết mã ngắn gọn, dễ hiểu và hiệu quả – tối giản nhưng mạnh mẽ.
